@@ -26,6 +26,7 @@ namespace Sandbox
 
         public static void Normalize(string readPath, string writePath)
         {
+            // string to classes Region and Stat
             List<Region> regions = new List<Region>();
 
             string text = "";
@@ -80,6 +81,7 @@ namespace Sandbox
                 }
             }
 
+            // sum to delta
             foreach (Region region in regions)
             {
                 for (int i = region.Stats.Count - 1; i > 0; i--)
@@ -93,6 +95,21 @@ namespace Sandbox
                 }
             }
 
+            // remove all zero stats
+            foreach (Region region in regions)
+            {
+                for (int i = region.Stats.Count - 1; i >= 0; i--)
+                {
+                    if (region.Stats[i].Cases == 0 
+                        && region.Stats[i].Deaths == 0
+                        && region.Stats[i].Recovered == 0)
+                    {
+                        region.Stats.RemoveAt(i);
+                    }
+                }
+            }
+
+            // classes to text
             foreach (Region region in regions)
             {
                 text += region.Name + "\n";
