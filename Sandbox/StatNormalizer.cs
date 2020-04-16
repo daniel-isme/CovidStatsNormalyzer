@@ -20,6 +20,7 @@ namespace Sandbox
         }
         class Region
         {
+            public int Id;
             public string Name;
             public List<Stat> Stats;
         }
@@ -29,6 +30,8 @@ namespace Sandbox
             // string to classes Region and Stat
             List<Region> regions = new List<Region>();
 
+            Regex regionRegex = new Regex(@"[А-Я].*");
+
             string text = "";
             string line, regName;
 
@@ -37,7 +40,6 @@ namespace Sandbox
             {
                 if (line == "") continue;
                 string[] stat = line.Split(' ');
-                Regex regionRegex = new Regex(@"[А-Я].*");
                 regName = regionRegex.Match(line).Value;
                 bool regionExist = false;
 
@@ -109,6 +111,7 @@ namespace Sandbox
                 }
             }
 
+            Console.OutputEncoding = Encoding.UTF8;
             // classes to text
             foreach (Region region in regions)
             {
@@ -122,19 +125,37 @@ namespace Sandbox
 
             File.WriteAllText(writePath, text);
 
-            //// write to output
-            //try
-            //{
-            //    using (StreamWriter sw = new StreamWriter(writePath, false, System.Text.Encoding.Default))
-            //    {
-            //        sw.WriteLine(text);
-            //    }
-            //    Console.WriteLine("Normalizer");
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e.Message);
-            //}
+            Regex idRegex = new Regex(@"\d*");
+            int num = 0, id;
+            sr = new StreamReader(@"C:\Users\danii\source\repos\Sandbox\Sandbox\AllDataFiles\TextData\all_regions_list.txt", System.Text.Encoding.Default);
+            while ((line = sr.ReadLine()) != null) // reading one line
+            {
+                if (line == "") continue;
+                regName = regionRegex.Match(line).Value;
+                id = int.Parse(idRegex.Match(line).Value);
+                bool regionExist = false;
+
+                foreach (Region region in regions)
+                {
+                    if (region.Name == regName)
+                    {
+                        regionExist = true;
+                        region.Id = id;
+                        Console.WriteLine($"{region.Id}  {region.Name}");
+                        break;
+                    }
+                }
+
+                if (regionExist)
+                {
+                    num++;
+                }
+                else
+                {
+                   // Console.WriteLine($"{regName}");
+                }
+            }
+            Console.WriteLine($"{num} matches");
         }
     }
 }
