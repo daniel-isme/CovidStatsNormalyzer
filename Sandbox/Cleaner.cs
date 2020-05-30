@@ -14,51 +14,61 @@ namespace Sandbox
             string text = "";
 
             // read from raw_text_data.txt and do regex
-            try
+            // async read
+            using (StreamReader sr = new StreamReader(readPath, Encoding.Default))
             {
-                // async read
-                using (StreamReader sr = new StreamReader(readPath, Encoding.Default))
+                string line, date = "", stat = "";
+
+                Regex dateRegex = new Regex(@"\d+");
+                Regex rawDateRegexApr = new Regex(@"в России на \d* апр");
+                Regex rawDateRegexMay = new Regex(@"в России на \d* ма");
+                Regex statRegex = new Regex(@"[А-Я].*[/] *\d* *[/] *\d*");
+
+                while ((line = sr.ReadLine()) != null) // reading one line
                 {
-                    string line, date = "", stat = "";
+                    if (line == "") continue;
 
-                    Regex dateRegex = new Regex(@"\d+");
-                    Regex rawDateRegex = new Regex(@"в России на \d* апр");
-                    Regex statRegex = new Regex(@"[А-Я].*[/] *\d* *[/] *\d*");
-
-                    while ((line = sr.ReadLine()) != null) // reading one line
+                    Match matchApr = rawDateRegexApr.Match(line);
+                    Match matchMay = rawDateRegexMay.Match(line);
+                    if (matchApr.Success)
                     {
-                        if (line == "") continue;
-
-                        Match match = rawDateRegex.Match(line);
-                        if (match.Success)
+                        var dayMatch = dateRegex.Match(matchApr.Value);
+                        if (dayMatch.Success)
                         {
-                            var dayMatch = dateRegex.Match(match.Value);
-                            if (dayMatch.Success)
+                            var day = dayMatch.Value;
+                            if (day.Length == 1)
                             {
-                                var day = dayMatch.Value;
-                                if (day.Length == 1)
-                                {
-                                    day = "0" + day;
-                                }
-                                date = $"{day}.04.2020";
-                                continue;
+                                day = "0" + day;
                             }
+                            date = $"{day}.04.2020";
+                            continue;
                         }
-
-                        match = statRegex.Match(line);
-                        if (match.Success)
-                        {
-                            stat = match.Value;
-                            stat = splitStat(stat);
-                            text += date + " " + stat + "\n";
-                        }
-
                     }
+
+                    if (matchMay.Success)
+                    {
+                        var dayMatch = dateRegex.Match(matchMay.Value);
+                        if (dayMatch.Success)
+                        {
+                            var day = dayMatch.Value;
+                            if (day.Length == 1)
+                            {
+                                day = "0" + day;
+                            }
+                            date = $"{day}.05.2020";
+                            continue;
+                        }
+                    }
+
+                    var matchStat = statRegex.Match(line);
+                    if (matchStat.Success)
+                    {
+                        stat = matchStat.Value;
+                        stat = splitStat(stat);
+                        text += date + " " + stat + "\n";
+                    }
+
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
             }
 
             File.WriteAllText(writePath, text);

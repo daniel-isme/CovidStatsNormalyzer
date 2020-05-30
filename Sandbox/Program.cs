@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -7,7 +9,8 @@ namespace Sandbox
 {
     class Program
     {
-        static void Main()
+
+        public static void Main()
         {
             var folder = @"C:\Users\danii\source\repos\Sandbox\Sandbox\AllDataFiles\TextData\";
             Cleaner.ClearRawText(
@@ -17,6 +20,7 @@ namespace Sandbox
             StatNormalizer.Normalize(
                 readPath: folder + @"cleared_raw.txt",
                 writePath: folder + @"normalized.txt");
+
         }
     }
 }
