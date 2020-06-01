@@ -13,13 +13,23 @@ namespace Sandbox
         public static void Main()
         {
             var folder = @"C:\Users\danii\source\repos\Sandbox\Sandbox\AllDataFiles\TextData\";
+
+            string badRegions = @"bad_regions.txt";
+            string rawTextData = @"raw_text_data.txt";
+            string clearedRaw = @"cleared_raw.txt";
+            string normalized = @"normalized.txt";
+
+            Cleaner.CorrectRegNames(
+                badRegionsPath: folder + badRegions,
+                dataPath: folder + rawTextData);
+
             Cleaner.ClearRawText(
-                readPath: folder + @"raw_text_data.txt",
-                writePath: folder + @"cleared_raw.txt");
+                readPath: folder + rawTextData,
+                writePath: folder + clearedRaw);
 
             StatNormalizer.Normalize(
-                readPath: folder + @"cleared_raw.txt",
-                writePath: folder + @"normalized.txt");
+                readPath: folder + clearedRaw,
+                writePath: folder + normalized);
 
         }
     }
